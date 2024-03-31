@@ -41,10 +41,10 @@ app.post("/addmsg", async (req, res) => {
 	console.log(text)
 	const msg = await UnapprovedMessage.create({ text }).catch(err => {
 		console.log(err)
-		return res.json({ message: "Error" })
+		return res.json({ sentForApproval: false })
 	})
 	console.log(msg)
-	res.json({ message: "Message sent for approval", text })
+	res.json({ sentForApproval: true })
 })
 app.get("/get_unapproved_msgs", async (req, res) => {
 	const messages = await UnapprovedMessage.findAll()
@@ -54,7 +54,7 @@ app.get("/get_approved_msgs", async (req, res) => {
 	const messages = await MessageApproved.findAll()
 	res.json(messages)
 })
-app.post("/approve", async (req, res) => {
+app.post("/approvemsg", async (req, res) => {
 	const { id, passwd } = req.body
 	if (passwd !== process.env.SECRET_PASSWORD) {
 		return res.json({ message: "Invalid password" })
@@ -67,6 +67,23 @@ app.post("/approve", async (req, res) => {
 		console.log(await UnapprovedMessage.destroy({ where: { id } }))
 		await MessageApproved.create({ text: message.text })
 		res.json({ message: "Message approved" })
+	} catch (err) {
+		console.log(err)
+		res.json({ message: `Error: ${err.message}` })
+	}
+})
+app.post("/deletemsg", async (req, res) => {
+	const { id, passwd } = req.body
+	if (passwd !== process.env.SECRET_PASSWORD) {
+		return res.json({ message: "Invalid password" })
+	}
+	const message = await UnapprovedMessage.findOne({ where: { id } })
+	if (!message) {
+		return res.json({ message: "Message not found" })
+	}
+	try {
+		console.log(await UnapprovedMessage.destroy({ where: { id } }))
+		res.json({ message: "Message deleted" })
 	} catch (err) {
 		console.log(err)
 		res.json({ message: `Error: ${err.message}` })
