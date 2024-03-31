@@ -72,7 +72,7 @@ app.post("/approvemsg", async (req, res) => {
 		res.json({ message: `Error: ${err.message}` })
 	}
 })
-app.post("/deletemsg", async (req, res) => {
+app.post("/delete_unapproved_msg", async (req, res) => {
 	const { id, passwd } = req.body
 	if (passwd !== process.env.SECRET_PASSWORD) {
 		return res.json({ message: "Invalid password" })
@@ -83,6 +83,23 @@ app.post("/deletemsg", async (req, res) => {
 	}
 	try {
 		console.log(await UnapprovedMessage.destroy({ where: { id } }))
+		res.json({ message: "Message deleted" })
+	} catch (err) {
+		console.log(err)
+		res.json({ message: `Error: ${err.message}` })
+	}
+})
+app.post("/delete_approved_msg", async (req, res) => {
+	const { id, passwd } = req.body
+	if (passwd !== process.env.SECRET_PASSWORD) {
+		return res.json({ message: "Invalid password" })
+	}
+	const message = await MessageApproved.findOne({ where: { id } })
+	if (!message) {
+		return res.json({ message: "Message not found" })
+	}
+	try {
+		console.log(await MessageApproved.destroy({ where: { id } }))
 		res.json({ message: "Message deleted" })
 	} catch (err) {
 		console.log(err)
