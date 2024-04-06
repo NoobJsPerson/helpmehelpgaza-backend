@@ -43,7 +43,7 @@ async function main() {
 		const id = (await UnapprovedMessage.get("max_id")).props.id
 		await UnapprovedMessage.set(id.toString(), { text })
 		await UnapprovedMessage.set("max_id", { id: id + 1 })
-		res.json({ sentForApproval: true })
+		res.status(200).json({ sentForApproval: true })
 	})
 	app.get("/get_unapproved_msgs", async (req, res) => {
 		const messages = []
