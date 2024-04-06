@@ -13,8 +13,6 @@
     "@cyclic.sh/dynamodb": "^0.0.35",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
-    "express": "^4.19.1",
-    "sequelize": "^6.37.1",
-    "sqlite3": "^5.1.7"
+    "express": "^4.19.1"
   }
 }
