@@ -64,7 +64,7 @@ app.get("/get_approved_msgs", async (req, res) => {
 	for (let i = 0; i < max_id; i++) {
 		const message = await MessageApproved.get(i.toString())
 		if (message) {
-			messages.push({ id: i, text: message.text })
+			messages.push({ id: i, text: message.props.text })
 		}
 	}
 	res.json(messages)
