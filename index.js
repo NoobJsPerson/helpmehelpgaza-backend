@@ -82,7 +82,7 @@ app.post("/approvemsg", async (req, res) => {
 		console.log(await UnapprovedMessage.delete(id.toString()))
 		await UnapprovedMessage.set("max_id", { id: (await UnapprovedMessage.get("max_id")).props.id - 1 })
 		const approved_id = (await MessageApproved.get("max_id")).props.id
-		await MessageApproved.set(approved_id.toString(), { text: message.text })
+		await MessageApproved.set(approved_id.toString(), { text: message.props.text })
 		await MessageApproved.set("max_id", { id: approved_id + 1 })
 		res.json({ message: "Message approved" })
 	} catch (err) {
