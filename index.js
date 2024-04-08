@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 	next()
 })
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
 	res.send("Hello")
 })
 
@@ -49,7 +49,7 @@ app.post("/addmsg", async (req, res) => {
 app.get("/get_unapproved_msgs", async (req, res) => {
 	const messages = []
 	const max_id = (await UnapprovedMessage.get("max_id")).props.id
-	for (let i = 1; i <= max_id; i++) {
+	for (let i = 0; i < max_id; i++) {
 		const message = await UnapprovedMessage.get(i.toString())
 		console.log(message)
 		if (message) {
@@ -61,7 +61,7 @@ app.get("/get_unapproved_msgs", async (req, res) => {
 app.get("/get_approved_msgs", async (req, res) => {
 	const messages = []
 	const max_id = (await MessageApproved.get("max_id")).props.id
-	for (let i = 1; i <= max_id; i++) {
+	for (let i = 0; i < max_id; i++) {
 		const message = await MessageApproved.get(i.toString())
 		if (message) {
 			messages.push({ id: i, text: message.text })
