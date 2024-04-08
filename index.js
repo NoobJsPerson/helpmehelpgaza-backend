@@ -127,6 +127,22 @@ app.post("/delete_approved_msg", async (req, res) => {
 		res.json({ message: `Error: ${err.message}` })
 	}
 })
+app.post("/delete_all_unapproved_msgs", async (req, res) => {
+	const { passwd } = req.body
+	if (passwd !== process.env.SECRET_PASSWORD) {
+		return res.json({ message: "Invalid password" })
+	}
+	const max_id = (await UnapprovedMessage.get("max_id")).props.id
+	for (let i = 0; i < max_id; i++) {
+		try {
+			await UnapprovedMessage.delete(i.toString())
+		} catch (err) {
+			console.log(err)
+		}
+	}
+	await UnapprovedMessage.set("max_id", { id: 0 })
+	res.json({ message: "All messages deleted" })
+})
 app.listen(3000, () => {
 	console.log("Server is running")
 })
