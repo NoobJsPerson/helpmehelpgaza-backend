@@ -6,6 +6,8 @@ const bodyParser = require("body-parser")
 const cyclicDB = require("@cyclic.sh/dynamodb")
 const db = cyclicDB("puzzled-jersey-bearCyclicDB")
 
+const translate = require('translate-google')
+
 const UnapprovedMessage = db.collection("unapproved_messages")
 const MessageApproved = db.collection("approved_messages")
 
@@ -59,10 +61,15 @@ app.get("/get_unapproved_msgs", async (req, res) => {
 	res.json(messages)
 })
 app.get("/get_approved_msgs", async (req, res) => {
+	const { lang } = req.query
+	
 	const messages = []
 	const max_id = (await MessageApproved.get("max_id")).props.id
 	for (let i = 0; i < max_id; i++) {
 		const message = await MessageApproved.get(i.toString())
+		if(lang in translate.languages){
+			message.props.text = await translate(message.props.text, { to: lang })
+		}
 		if (message) {
 			messages.push({ id: i, text: message.props.text })
 		}
